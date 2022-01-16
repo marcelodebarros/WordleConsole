@@ -56,7 +56,16 @@ namespace WordleConsole
                 string line = sr.ReadLine().ToUpper().Trim();
                 if (!String.IsNullOrEmpty(line) && line.Length == wordLen && !htWords.ContainsKey(line))
                 {
-                    htWords.Add(line, true);
+                    bool validWord = true;
+                    foreach (char c in line)
+                    {
+                        if (!(c >= 'A' && c <= 'Z'))
+                        {
+                            validWord = false;
+                            break;
+                        }
+                    }
+                    if (validWord) htWords.Add(line, true);
                 }
             }
             sr.Close();
