@@ -21,9 +21,7 @@ namespace WordleConsole
             bool human = args[3].Equals("human");
 
             for (; ; )
-            {
                 if (!wordleGame.Play(human) || wordleGame.CheckGuesses()) break;
-            }
         }
     }
 
@@ -88,15 +86,12 @@ namespace WordleConsole
             words = new string[htWords.Count];
             int index = 0;
             foreach (string word in htWords.Keys)
-            {
                 words[index++] = word;
-            }
         }
 
         private void SelectTheWord()
         {
-            Random rd = new Random();
-            theWord = words[rd.Next(0, words.Length)];
+            theWord = words[(new Random()).Next(0, words.Length)];
         }
 
         public bool Play(bool human)
@@ -234,10 +229,9 @@ namespace WordleConsole
 
             //Now the more right matches, the merrier
             int countPerfectMatches = 0;
-            foreach (char c in rightLetters.Keys)
-            {
-                countPerfectMatches += ((Hashtable)rightLetters[c]).Count;
-            }
+            foreach (char c in rightLetters.Keys) countPerfectMatches += ((Hashtable)rightLetters[c]).Count;
+            int countImperfectMatches = 0;
+            foreach (char c in rightLettersWrongPlace.Keys) countImperfectMatches += ((Hashtable)rightLettersWrongPlace[c]).Count;
 
             List<string> weightedCandidates = new List<string>();
             foreach (string str in candidates)
@@ -281,14 +275,14 @@ namespace WordleConsole
                 }
                 else
                 {
-                    for (int i = 0; i < countMatches; i++) weightedCandidates.Add(str);
+                    if (countMatches == countImperfectMatches)
+                        for (int i = 0; i < countMatches; i++) weightedCandidates.Add(str);
                 }
             }
 
             string[] arr = weightedCandidates.ToArray();
 
-            Random rd = new Random();
-            return arr[rd.Next(0, arr.Length)];
+            return arr[(new Random()).Next(0, arr.Length)];
         }
 
         private void WriteLineColored(params (ConsoleColor color, string value)[] values)
