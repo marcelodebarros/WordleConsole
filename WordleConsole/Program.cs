@@ -206,11 +206,14 @@ namespace WordleConsole
         {
             //First candidates: ignore wrong letters
             List<string> candidates = new List<string>();
+            List<string> backupCandidates = new List<string>();
 
             foreach (string str in htWords.Keys)
             {
                 if (!guessedWords.ContainsKey(str))
                 {
+                    backupCandidates.Add(str);
+
                     //Ignore wrong letters
                     bool validWord = true;
                     foreach (char c in str)
@@ -251,17 +254,13 @@ namespace WordleConsole
                     {
                         Hashtable positions = (Hashtable)rightLetters[str[i]];
                         if (positions.ContainsKey(i))
-                        {
                             perfectMatches++;
-                        }
                     }
                     else if (rightLettersWrongPlace.ContainsKey(str[i]))
                     {
                         Hashtable positions = (Hashtable)rightLettersWrongPlace[str[i]];
                         if (!positions.ContainsKey(i))
-                        {
                             countMatches++;
-                        }
                     }
                 }
 
@@ -281,7 +280,7 @@ namespace WordleConsole
             }
 
             string[] arr = weightedCandidates.ToArray();
-
+            if (arr.Length == 0) return backupCandidates[(new Random()).Next(0, backupCandidates.Count)];
             return arr[(new Random()).Next(0, arr.Length)];
         }
 
