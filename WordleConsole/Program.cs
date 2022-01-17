@@ -276,7 +276,7 @@ namespace WordleConsole
                     if (perfectMatches == countPerfectMatches)
                     {
                         weightedCandidates.Add(str);
-                        for (int i = 0; i < countMatches; i++) weightedCandidates.Add(str);
+                        for (int i = 0; i < countMatches * 2; i++) weightedCandidates.Add(str);
                     }
                 }
                 else
