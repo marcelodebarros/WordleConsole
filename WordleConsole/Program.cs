@@ -280,7 +280,17 @@ namespace WordleConsole
             }
 
             string[] arr = weightedCandidates.ToArray();
-            if (arr.Length == 0) return backupCandidates[(new Random()).Next(0, backupCandidates.Count)];
+            if (arr.Length == 0)
+            {
+                if (candidates.Count > 0)
+                {
+                    return candidates[(new Random()).Next(0, candidates.Count)];
+                }
+                else
+                {
+                    return backupCandidates[(new Random()).Next(0, backupCandidates.Count)];
+                }
+            }
             return arr[(new Random()).Next(0, arr.Length)];
         }
 
