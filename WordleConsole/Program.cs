@@ -10,18 +10,48 @@ namespace WordleConsole
     {
         static void Main(string[] args)
         {
-            if (args.Length != 4)
+            if (args.Length < 4)
             {
                 Console.WriteLine("Usage: WordleConsole.exe <word len> <attempts allowed> <dictionary file> <human OR computer>");
+                Console.WriteLine("There is an extra optional parameter for the computer: runs=<number>");
                 return;
             }
 
-            WordleGame wordleGame = new WordleGame(Int32.Parse(args[0]), Int32.Parse(args[1]), args[2]);
+            if (args.Length == 4)
+            {
 
-            bool human = args[3].Equals("human");
+                WordleGame wordleGame = new WordleGame(Int32.Parse(args[0]), Int32.Parse(args[1]), args[2]);
 
-            for (; ; )
-                if (!wordleGame.Play(human) || wordleGame.CheckGuesses()) break;
+                bool human = args[3].Equals("human");
+
+                for (; ; )
+                    if (!wordleGame.Play(human) || wordleGame.CheckGuesses()) break;
+            }
+            else if (args.Length == 5 && args[3].Equals("computer") && args[4].StartsWith("runs="))
+            {
+                string[] parts = args[4].Split('=');
+                int numberOfRuns = Int32.Parse(parts[1]);
+
+                int wins = 0;
+                for (int i = 0; i < numberOfRuns; i++)
+                {
+                    WordleGame wordleGame = new WordleGame(Int32.Parse(args[0]), Int32.Parse(args[1]), args[2]);
+                    for (; ; )
+                    {
+                        if (!wordleGame.Play(false, false)) break;
+                        if (wordleGame.CheckGuesses())
+                        {
+                            wins++;
+                            break;
+                        }
+                    }
+                }
+
+                Console.WriteLine();
+                Console.WriteLine("Runs: {0}", numberOfRuns);
+                Console.WriteLine("Wins: {0}", wins);
+                Console.WriteLine("Percentage of Wins: {0}%", wins*100.0/numberOfRuns);
+            }
         }
     }
 
@@ -94,7 +124,7 @@ namespace WordleConsole
             theWord = words[(new Random()).Next(0, words.Length)];
         }
 
-        public bool Play(bool human)
+        public bool Play(bool human, bool sleep = true)
         {
             if (currentAttempt >= attempts)
             {
@@ -125,7 +155,8 @@ namespace WordleConsole
                 Console.WriteLine("Computer, what's your guess number #{0}?", currentAttempt);
                 string computerGuess = ComputerGuess();
                 Console.WriteLine("HERE IS MY GUESS: {0}", computerGuess);
-                Thread.Sleep(3000);
+                if(sleep)
+                    Thread.Sleep(3000);
                 board[currentAttempt - 1] = computerGuess;
 
                 if (!guessedWords.ContainsKey(computerGuess)) guessedWords.Add(computerGuess, true);
